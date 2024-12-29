@@ -10,7 +10,14 @@ EPD = NULL
 # I only care about this model:
 EPD = epd7in5V2
 
-ifeq ($(EPD), epd7in5bV2)
+# MY ONE
+ifeq ($(EPD), epd7in5V2)
+	OBJ_C_EPD = ${DIR_EPD}/EPD_7in5_V2.c
+	OBJ_C_Examples = ${DIR_Examples}/EPD_7in5_V2_test.c
+else ifeq ($(EPD), epd7in5V2_old)
+	OBJ_C_EPD = ${DIR_EPD}/EPD_7in5_V2_old.c
+	OBJ_C_Examples = ${DIR_Examples}/EPD_7in5_V2_test_old.c
+else ifeq ($(EPD), epd7in5bV2)
 	OBJ_C_EPD = ${DIR_EPD}/EPD_7in5b_V2.c
 	OBJ_C_Examples = ${DIR_Examples}/EPD_7in5b_V2_test.c
 else ifeq ($(EPD), epd7in5bV2_old)
@@ -58,7 +65,7 @@ DEBUG_JETSONI = -D $(USELIB_JETSONI) -D JETSON
 .PHONY : RPI JETSON clean
 
 
-CFLAGS += -I $(DIR_Config) -I $(DIR_GUI) -I $(DIR_EPD) -I $(DIR_FONTS)
+CFLAGS += -I $(DIR_Config) -I $(DIR_GUI) -I $(DIR_EPD) -I $(DIR_FONTS) -I $(DIR_Examples)
 
 # We only want RPI
 all:RPI_DEV RPI_epd

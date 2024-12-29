@@ -8,7 +8,7 @@ DIR_BIN		 = ./bin
 EPD = NULL
 
 # I only care about this model:
-EPD = epd7in5bV2
+EPD = epd7in5V2
 
 ifeq ($(EPD), epd7in5bV2)
 	OBJ_C_EPD = ${DIR_EPD}/EPD_7in5b_V2.c
@@ -57,7 +57,12 @@ DEBUG_JETSONI = -D $(USELIB_JETSONI) -D JETSON
 
 .PHONY : RPI JETSON clean
 
-RPI:RPI_DEV RPI_epd 
+
+CFLAGS += -I $(DIR_Config) -I $(DIR_GUI) -I $(DIR_EPD) -I $(DIR_FONTS)
+
+# We only want RPI
+all:RPI_DEV RPI_epd
+
 JETSON: JETSON_DEV JETSON_epd
 
 TARGET = epd
@@ -67,14 +72,30 @@ CFLAGS += $(MSG) -D $(EPD)
 
 RPI_epd:${OBJ_O}
 	echo $(@)
+	@echo '$(CC) $(CFLAGS) -D RPI $(OBJ_O) $(RPI_DEV_C) -o $(TARGET) $(LIB_RPI) $(DEBUG)'
 	$(CC) $(CFLAGS) -D RPI $(OBJ_O) $(RPI_DEV_C) -o $(TARGET) $(LIB_RPI) $(DEBUG)
 
 #Example (simplified) output:
 # gcc -g -O -Wall -D RPI ./binEPD_7in5_V2.o $(DIR_BIN)/dev_hardware_SPI.o -o epd
-
 # -D RPI is equivalent to #define RPI
 
-	
+#Full output:
+#gcc -g -O -ffunction-sections -fdata-sections -Wall -D epd7in5bV2 -D RPI ./bin/GUI_BMPfile.o ./bin/GUI_Paint.o
+#      ./bin/main.o ./bin/ImageData2.o ./bin/ImageData.o ./bin/font12.o ./bin/font12CN.o ./bin/font16.o ./bin/font20.o
+#      ./bin/font24.o ./bin/font24CN.o ./bin/font8.o ./bin/dev_hardware_SPI.o ./bin/DEV_Config.o -o epd -Wl,--gc-sections
+#		-llgpio -lm -D DEBUG
+
+
+RPI_DEV:
+ifeq ($(USELIB_RPI), USE_DEV_LIB)
+	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/dev_hardware_SPI.c -o $(DIR_BIN)/dev_hardware_SPI.o $(LIB_RPI) $(DEBUG)
+	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/DEV_Config.c -o $(DIR_BIN)/DEV_Config.o $(LIB_RPI) $(DEBUG)
+	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/RPI_gpiod.c -o $(DIR_BIN)/RPI_gpiod.o $(LIB_RPI) $(DEBUG)
+else
+	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/dev_hardware_SPI.c -o $(DIR_BIN)/dev_hardware_SPI.o $(LIB_RPI) $(DEBUG)
+	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/DEV_Config.c -o $(DIR_BIN)/DEV_Config.o $(LIB_RPI) $(DEBUG)
+endif
+
 JETSON_epd:${OBJ_O}
 	echo $(@)
 	$(CC) $(CFLAGS) $(OBJ_O) $(JETSON_DEV_C) -o $(TARGET) $(LIB_JETSONI) $(DEBUG)
@@ -93,20 +114,10 @@ ${DIR_BIN}/%.o:$(DIR_FONTS)/%.c
 ${DIR_BIN}/%.o:$(DIR_GUI)/%.c
 	$(CC) $(CFLAGS) -c	$< -o $@ -I $(DIR_Config) $(DEBUG)
 
-RPI_DEV:
-ifeq ($(USELIB_RPI), USE_DEV_LIB)
-	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/dev_hardware_SPI.c -o $(DIR_BIN)/dev_hardware_SPI.o $(LIB_RPI) $(DEBUG)
-	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/DEV_Config.c -o $(DIR_BIN)/DEV_Config.o $(LIB_RPI) $(DEBUG)
-	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/RPI_gpiod.c -o $(DIR_BIN)/RPI_gpiod.o $(LIB_RPI) $(DEBUG)
-else
-	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/dev_hardware_SPI.c -o $(DIR_BIN)/dev_hardware_SPI.o $(LIB_RPI) $(DEBUG)
-	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/DEV_Config.c -o $(DIR_BIN)/DEV_Config.o $(LIB_RPI) $(DEBUG)
-endif
-	
 JETSON_DEV:
 	$(CC) $(CFLAGS) $(DEBUG_JETSONI) -c	 $(DIR_Config)/sysfs_software_spi.c -o $(DIR_BIN)/sysfs_software_spi.o $(LIB_JETSONI) $(DEBUG)
 	$(CC) $(CFLAGS) $(DEBUG_JETSONI) -c	 $(DIR_Config)/sysfs_gpio.c -o $(DIR_BIN)/sysfs_gpio.o $(LIB_JETSONI) $(DEBUG)
-	$(CC) $(CFLAGS) $(DEBUG_JETSONI) -c	 $(DIR_Config)/DEV_Config.c -o $(DIR_BIN)/DEV_Config.o $(LIB_JETSONI)  $(DEBUG)
+	$(CC) $(CFLAGS) $(DEBUG_JETSONI) -c	 $(DIR_Config)/DEV_Config.c -o $(DIR_BIN)/DEV_Config.o $(LIB_JETSONI) $(DEBUG)
 
 clean :
 	rm $(DIR_BIN)/*.* 

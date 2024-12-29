@@ -2,5 +2,7 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/c/examples/EPD_7in5_V2_test.c" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/c/lib/Fonts/fonts.h" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/cpp/lib/Fonts/fonts.h" charset="ISO-8859-1" />
   </component>
 </project>

@@ -8,7 +8,11 @@ DIR_BIN		 = ./bin
 EPD = NULL
 
 # I only care about this model:
-EPD = epd7in5V2
+#EPD = epd7in5V2
+
+# But I want to perform my test
+EPD = test_my_code
+
 
 # MY ONE
 ifeq ($(EPD), epd7in5V2)
@@ -17,6 +21,11 @@ ifeq ($(EPD), epd7in5V2)
 else ifeq ($(EPD), epd7in5V2_old)
 	OBJ_C_EPD = ${DIR_EPD}/EPD_7in5_V2_old.c
 	OBJ_C_Examples = ${DIR_Examples}/EPD_7in5_V2_test_old.c
+
+else ifeq ($(EPD), test_my_code)
+	OBJ_C_EPD = ${DIR_EPD}/EPD_7in5_V2.c
+    OBJ_C_Examples = ${DIR_Examples}/my_test.c
+
 else
     OBJ_C_EPD = NULL
     OBJ_C_Examples = NULL
@@ -75,7 +84,6 @@ CFLAGS += $(MSG) -D $(EPD)
 
 RPI_epd:${OBJ_O}
 	echo $(@)
-	@echo '$(CC) $(CFLAGS) -D RPI $(OBJ_O) $(RPI_DEV_C) -o $(TARGET) $(LIB_RPI) $(DEBUG)'
 	$(CC) $(CFLAGS) -D RPI $(OBJ_O) $(RPI_DEV_C) -o $(TARGET) $(LIB_RPI) $(DEBUG)
 
 #Example (simplified) output:

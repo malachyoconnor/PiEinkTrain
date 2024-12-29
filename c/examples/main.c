@@ -49,6 +49,10 @@ int main(void)
 
 #elif epd13in3k
     EPD_13in3k_test();
+
+#elif test_my_code
+    my_test();
+
 #else
     printf("Please specify the EPD model when making. \r\n");
     printf("Example: When you run the EPD_7in5_V2_test() program, input: sudo make clean && make EPD=epd7in5V2 \r\n");

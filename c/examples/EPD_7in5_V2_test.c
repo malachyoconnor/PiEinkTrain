@@ -73,7 +73,7 @@ int EPD_7in5_V2_test(void)
     GUI_ReadBmp("./pic/100x100.bmp", 0, 0);
     EPD_7IN5_V2_Display(BlackImage);
     DEV_Delay_ms(2000);
-#endif        
+#endif
 
 #if 1   // show image for array   
     EPD_7IN5_V2_Init_Fast();
@@ -158,6 +158,8 @@ int EPD_7in5_V2_test(void)
 
 /*
     The feature will only be available on screens sold after 24/10/23
+
+    NOTE: This works, but it segfaults lol.
 */
 #if 0 // show image for array
     free(BlackImage);
@@ -172,7 +174,7 @@ int EPD_7in5_V2_test(void)
     Paint_NewImage(BlackImage, EPD_7IN5_V2_WIDTH, EPD_7IN5_V2_HEIGHT, 0, WHITE);
     Paint_SetScale(4);
     Paint_Clear(0xff);
-    
+
     Paint_DrawPoint(10, 80, GRAY4, DOT_PIXEL_1X1, DOT_STYLE_DFT);
     Paint_DrawPoint(10, 90, GRAY4, DOT_PIXEL_2X2, DOT_STYLE_DFT);
     Paint_DrawPoint(10, 100, GRAY4, DOT_PIXEL_3X3, DOT_STYLE_DFT);

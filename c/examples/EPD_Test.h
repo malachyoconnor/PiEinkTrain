@@ -42,4 +42,6 @@ int EPD_7in5_V2_test_old(void);
 int EPD_7in5b_V2_test(void);
 int EPD_7in5b_V2_test_old(void);
 
+int my_test(void);
+
 #endif
